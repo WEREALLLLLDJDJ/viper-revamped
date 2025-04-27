@@ -331,35 +331,8 @@
   <div id="gamesContent" class="content-section">
     <div class="games-inner-wrapper">
       <input type="text" class="search-bar" id="searchGames" placeholder="Search games..." />
-
-      <div class="games-list">
-        <div class="game-button" data-src="/play/liquid/liquid.html">
-          <div class="image-wrapper">
-            <img src="/img/liquid.jpg" alt="Liquid Soccer">
-            <div class="game-title">Liquid Soccer</div>
-          </div>
-        </div>
-
-        <div class="game-button" data-src="/play/tag/tag.html">
-          <div class="image-wrapper">
-            <img src="/img/splash.jpg" alt="Tag">
-            <div class="game-title">Tag</div>
-          </div>
-        </div>
-
-        <div class="game-button" data-src="/files/basketrandom/index.html">
-          <div class="image-wrapper">
-            <img src="/files/basketrandom/splash.jpeg" alt="Basket Random">
-            <div class="game-title">Basket Random</div>
-          </div>
-        </div>
-
-        <div class="game-button" data-src="/files/nzp-gay/index.html">
-          <div class="image-wrapper">
-            <img src="/img/cod.png" alt="Tag">
-            <div class="game-title">COD Zombies</div>
-          </div>
-        </div>
+      <div class="games-list" id="gamesList">
+        <!-- Games will be populated here dynamically -->
       </div>
     </div>
   </div>
@@ -376,38 +349,55 @@
   </div>
 
   <script>
-    setTimeout(function () {
-      document.querySelector('.loading-overlay').classList.add('loaded');
-      setTimeout(function () {
-        document.querySelector('.loading-overlay').remove();
-        document.querySelector('.title-container').style.visibility = 'visible';
-      }, 1000);
-    }, 10000);
+    const games = [
+      { title: 'Liquid Soccer', imgSrc: '/img/liquid.jpg', url: '/play/liquid/liquid.html' },
+      { title: 'Tag', imgSrc: '/img/splash.jpg', url: '/play/tag/tag.html' },
+      { title: 'Basket Random', imgSrc: '/files/basketrandom/splash.jpeg', url: '/files/basketrandom/index.html' },
+      { title: 'COD Zombies', imgSrc: '/img/cod.png', url: '/files/nzp-gay/index.html' },
+    ];
 
-    const tabs = document.querySelectorAll('.nav-tab');
-    const sections = document.querySelectorAll('.content-section');
-    const searchSection = document.getElementById('searchContent'); // New search section
+    function displayGames(gamesList) {
+      const gamesListContainer = document.getElementById('gamesList');
+      gamesListContainer.innerHTML = '';
 
-    tabs.forEach(tab => {
+      gamesList.forEach(game => {
+        const gameButton = document.createElement('div');
+        gameButton.classList.add('game-button');
+        gameButton.setAttribute('data-src', game.url);
+        gameButton.innerHTML = `
+          <div class="image-wrapper">
+            <img src="${game.imgSrc}" alt="${game.title}" />
+            <div class="game-title">${game.title}</div>
+          </div>
+        `;
+        gamesListContainer.appendChild(gameButton);
+        gameButton.addEventListener('click', () => {
+          const iframe = document.getElementById('gameIframe');
+          iframe.src = game.url;
+          document.getElementById('iframeOverlay').style.display = 'flex';
+        });
+      });
+    }
+
+    // Filter games based on the search query
+    document.getElementById('searchGames').addEventListener('input', function () {
+      const query = this.value.toLowerCase();
+      const filteredGames = games.filter(game => game.title.toLowerCase().includes(query));
+      displayGames(filteredGames);
+    });
+
+    // Initial display of games
+    displayGames(games);
+
+    document.querySelectorAll('.nav-tab').forEach(tab => {
       tab.addEventListener('click', function () {
-        tabs.forEach(t => t.classList.remove('active'));
-        sections.forEach(section => section.classList.remove('active'));
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
         tab.classList.add('active');
         const activeSectionId = tab.id.replace('Tab', 'Content');
         const activeSection = document.getElementById(activeSectionId);
         if (activeSection) {
           activeSection.classList.add('active');
-        }
-      });
-    });
-
-    document.querySelectorAll('.game-button').forEach(button => {
-      button.addEventListener('click', () => {
-        const gameSrc = button.getAttribute('data-src');
-        if (gameSrc) {
-          const iframe = document.getElementById('gameIframe');
-          iframe.src = gameSrc;
-          document.getElementById('iframeOverlay').style.display = 'flex';
         }
       });
     });
