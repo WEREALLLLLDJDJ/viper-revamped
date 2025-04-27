@@ -408,6 +408,17 @@
       iframe.src = '';
       overlay.style.display = 'none';
     }
+
+    // Hide the loading overlay once everything is loaded
+    window.onload = function () {
+      const loadingOverlay = document.querySelector('.loading-overlay');
+      loadingOverlay.style.opacity = '0';
+
+      // Wait for the transition to complete before setting visibility to hidden
+      setTimeout(() => {
+        loadingOverlay.style.display = 'none';
+      }, 1000); // Match the transition time in the CSS (1 second)
+    };
   </script>
 </body>
 </html>
