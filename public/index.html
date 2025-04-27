@@ -8,6 +8,7 @@
   <script src="/uv/uv.bundle.js" charset="UTF-8"></script>
   <script src="/uv/uv.config.js"></script>
   <script src="/js/preload.js"></script>
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -183,7 +184,7 @@
       width: 100%;
     }
 
-    .pxyinput {
+    .search-bar {
       width: 80%;
       max-width: 500px;
       padding: 10px;
@@ -287,9 +288,14 @@
       cursor: pointer;
     }
 
-    /* Add styles for search tab */
-    #searchContent {
+    /* New styles for Search Tab */
+    .search-content {
       padding: 20px;
+      background-color: #0d0d0d;
+      color: white;
+      border-radius: 10px;
+      margin-top: 20px;
+      max-width: 90vw;
       text-align: center;
     }
   </style>
@@ -305,6 +311,7 @@
     <h1>Viper Revamped</h1>
   </div>
 
+  <!-- Navigation Tabs -->
   <div class="nav-tabs">
     <div class="nav-tab" id="homeTab"><i class="fas fa-home"></i> Home</div>
     <div class="nav-tab" id="gamesTab"><i class="fas fa-gamepad"></i> Games</div>
@@ -314,7 +321,6 @@
   <!-- Games Section -->
   <div id="gamesContent" class="content-section">
     <div class="games-inner-wrapper">
-      <input type="text" class="search-bar" id="searchGames" placeholder="Search games..." />
       <div class="games-list">
         <div class="game-button" data-src="/play/liquid/liquid.html">
           <div class="image-wrapper">
@@ -322,21 +328,24 @@
             <div class="game-title">Liquid Soccer</div>
           </div>
         </div>
+
         <div class="game-button" data-src="/play/tag/tag.html">
           <div class="image-wrapper">
             <img src="/img/splash.jpg" alt="Tag">
             <div class="game-title">Tag</div>
           </div>
         </div>
+
         <div class="game-button" data-src="/files/basketrandom/index.html">
           <div class="image-wrapper">
             <img src="/files/basketrandom/splash.jpeg" alt="Basket Random">
             <div class="game-title">Basket Random</div>
           </div>
         </div>
+
         <div class="game-button" data-src="/files/nzp-gay/index.html">
           <div class="image-wrapper">
-            <img src="/img/cod.png" alt="COD Zombies">
+            <img src="/img/cod.png" alt="Tag">
             <div class="game-title">COD Zombies</div>
           </div>
         </div>
@@ -345,55 +354,62 @@
   </div>
 
   <!-- Search Section -->
-  <div id="searchContent" class="content-section">
-    <input type="text" class="pxyinput" id="searchTabBar" placeholder="Search..." />
+  <div id="searchContent" class="search-content">
+    <input type="text" class="search-bar" id="searchGames" placeholder="Search games..." />
+  </div>
+
+  <!-- Iframe Overlay -->
+  <div id="iframeOverlay">
+    <button onclick="closeIframe()">Close</button>
+    <iframe id="gameIframe" src="" allowfullscreen></iframe>
   </div>
 
   <script src="./js/index.js"></script>
   <script src="./js/search.js"></script>
-  
+
   <script>
-    const homeTab = document.getElementById("homeTab");
-    const gamesTab = document.getElementById("gamesTab");
-    const searchTab = document.getElementById("searchTab");
-    const gamesContent = document.getElementById("gamesContent");
-    const searchContent = document.getElementById("searchContent");
-    const searchInput = document.querySelector('pxyinput');
+    setTimeout(function () {
+      document.querySelector('.loading-overlay').classList.add('loaded');
+      setTimeout(function () {
+        document.querySelector('.loading-overlay').remove();
+        document.querySelector('.title-container').style.visibility = 'visible';
+      }, 1000);
+    }, 10000);
 
-    // Hide loading overlay after the page loads
-    window.onload = function() {
-      setTimeout(() => {
-        loadingOverlay.style.opacity = '0';
-        setTimeout(() => {
-          loadingOverlay.style.display = 'none';
-        }, 1000); // Wait for opacity transition to complete
-      }, 500); // Add some delay to allow animations to run
-    };
+    const tabs = document.querySelectorAll('.nav-tab');
+    const sections = document.querySelectorAll('.content-section');
+    const searchSection = document.getElementById('searchContent'); // New search section
 
-    // Event listeners for navigation tabs
-    homeTab.addEventListener("click", function() {
-      gamesContent.classList.remove("active");
-      searchContent.classList.remove("active");
-      homeTab.classList.add("active");
-      gamesTab.classList.remove("active");
-      searchTab.classList.remove("active");
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function () {
+        tabs.forEach(t => t.classList.remove('active'));
+        sections.forEach(section => section.classList.remove('active'));
+        tab.classList.add('active');
+        const activeSectionId = tab.id.replace('Tab', 'Content');
+        const activeSection = document.getElementById(activeSectionId);
+        if (activeSection) {
+          activeSection.classList.add('active');
+        }
+      });
     });
 
-    gamesTab.addEventListener("click", function() {
-      gamesContent.classList.add("active");
-      searchContent.classList.remove("active");
-      homeTab.classList.remove("active");
-      gamesTab.classList.add("active");
-      searchTab.classList.remove("active");
+    document.querySelectorAll('.game-button').forEach(button => {
+      button.addEventListener('click', () => {
+        const gameSrc = button.getAttribute('data-src');
+        if (gameSrc) {
+          const iframe = document.getElementById('gameIframe');
+          iframe.src = gameSrc;
+          document.getElementById('iframeOverlay').style.display = 'flex';
+        }
+      });
     });
 
-    searchTab.addEventListener("click", function() {
-      searchContent.classList.add("active");
-      gamesContent.classList.remove("active");
-      homeTab.classList.remove("active");
-      gamesTab.classList.remove("active");
-      searchTab.classList.add("active");
-    });
+    function closeIframe() {
+      const overlay = document.getElementById('iframeOverlay');
+      const iframe = document.getElementById('gameIframe');
+      iframe.src = '';
+      overlay.style.display = 'none';
+    }
   </script>
 </body>
 </html>
