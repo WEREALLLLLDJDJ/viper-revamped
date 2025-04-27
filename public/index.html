@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Viper Revamped</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <script src="/uv/uv.bundle.js" charset="UTF-8"></script>
+  <script src="/uv/uv.config.js"></script>
+  <script src="/js/preload.js"></script>
   <style>
     body {
       margin: 0;
@@ -180,7 +183,7 @@
       width: 100%;
     }
 
-    .search-bar {
+    .pxyinput {
       width: 80%;
       max-width: 500px;
       padding: 10px;
@@ -283,6 +286,12 @@
       border-radius: 8px;
       cursor: pointer;
     }
+
+    /* Add styles for search tab */
+    #searchContent {
+      padding: 20px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -335,11 +344,21 @@
     </div>
   </div>
 
+  <!-- Search Section -->
+  <div id="searchContent" class="content-section">
+    <input type="text" class="pxyinput" id="searchTabBar" placeholder="Search..." />
+  </div>
+
+  <script src="./js/index.js"></script>
+  <script src="./js/search.js"></script>
+  
   <script>
     const homeTab = document.getElementById("homeTab");
     const gamesTab = document.getElementById("gamesTab");
     const searchTab = document.getElementById("searchTab");
     const gamesContent = document.getElementById("gamesContent");
+    const searchContent = document.getElementById("searchContent");
+    const searchInput = document.querySelector('pxyinput');
 
     // Hide loading overlay after the page loads
     window.onload = function() {
@@ -354,6 +373,7 @@
     // Event listeners for navigation tabs
     homeTab.addEventListener("click", function() {
       gamesContent.classList.remove("active");
+      searchContent.classList.remove("active");
       homeTab.classList.add("active");
       gamesTab.classList.remove("active");
       searchTab.classList.remove("active");
@@ -361,9 +381,18 @@
 
     gamesTab.addEventListener("click", function() {
       gamesContent.classList.add("active");
+      searchContent.classList.remove("active");
       homeTab.classList.remove("active");
       gamesTab.classList.add("active");
       searchTab.classList.remove("active");
+    });
+
+    searchTab.addEventListener("click", function() {
+      searchContent.classList.add("active");
+      gamesContent.classList.remove("active");
+      homeTab.classList.remove("active");
+      gamesTab.classList.remove("active");
+      searchTab.classList.add("active");
     });
   </script>
 </body>
